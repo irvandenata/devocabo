@@ -8,14 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Word extends Model
 {
     use HasFactory;
-    protected $guarded = [];
-    public function categories (){
-    return $this->belongsToMany(Category::class,'category_words');
+    public function groupWord()
+    {
+        return $this->belongsTo(GroupWord::class);
     }
-
-    public function language(){
-    return $this->belongsTo(Language::class);
-
-    }
-
 }

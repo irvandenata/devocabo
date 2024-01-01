@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,7 +16,26 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::get('/', [App\Http\Controllers\LandingController::class, 'index'])->name('landing');
+ Route::group(['middleware' => 'auth'], function () {
+    Route::get('/', [App\Http\Controllers\GroupWordController::class, 'index'])->name('group-words.index');
+    Route::get('/explore', [App\Http\Controllers\GroupWordController::class, 'search'])->name('group-words.explore');
+    Route::get('/a', [App\Http\Controllers\GroupWordController::class, 'index'])->name('group-words.create');
+    Route::get('/group-words/{id}/edit', [App\Http\Controllers\GroupWordController::class, 'edit'])->name('group-words.edit');
+    Route::post('/group-words/store', [App\Http\Controllers\GroupWordController::class, 'store'])->name('group-words.store');
+    Route::post('/group-words/{id}/update', [App\Http\Controllers\GroupWordController::class, 'update'])->name('group-words.update');
+    Route::delete('/group-words/destroy/{id}', [App\Http\Controllers\GroupWordController::class, 'destroy'])->name('group-words.destroy');
+    Route::get('/group-words/clone/{id}', [App\Http\Controllers\GroupWordController::class, 'clone'])->name('group-words.clone');
+
+    Route::get('/group-words/{id}', [App\Http\Controllers\WordController::class, 'index'])->name('words.index');
+    Route::get('/group-words/{id}/show', [App\Http\Controllers\WordController::class, 'show'])->name('words.show');
+    Route::post('/group-words/{id}', [App\Http\Controllers\WordController::class, 'store'])->name('words.store');
+    Route::delete('/words/{id}', [App\Http\Controllers\WordController::class, 'destroy'])->name('words.destroy');
+    // Route::get('/group-words/{id}', [App\Http\Controllers\WordController::class, 'index'])->name('words.create');
+    // Route::get('/group-words/{id}', [App\Http\Controllers\WordController::class, 'index'])->name('words.store');
+    // Route::get('/group-words/{id}', [App\Http\Controllers\WordController::class, 'index'])->name('words.create');
+ });
+
+
 Route::get('/blog', [App\Http\Controllers\BlogController::class, 'index'])->name('blog.search');
 Route::post('/get-in-touch', [App\Http\Controllers\LandingController::class, 'getInTouch'])->name('get-in-touch');
 Route::get('/projects', [App\Http\Controllers\BlogController::class, 'project'])->name('projects.search');
