@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Auth;
 use Illuminate\Support\Facades\Hash;
-use Socialite;
+use Laravel\Socialite\Facades\Socialite;
 
 class GoogleController extends Controller
 {
@@ -19,7 +19,7 @@ class GoogleController extends Controller
 
         // jika user masih login lempar ke home
         if (Auth::check()) {
-            return redirect('/admin/dashboard');
+            return redirect('/');
         }
 
         try {
@@ -31,7 +31,7 @@ class GoogleController extends Controller
         $user = User::where('google_id', $oauthUser->id)->first();
         if ($user) {
             Auth::loginUsingId($user->id);
-            return redirect('/detele-account');
+            return redirect('/');
         } else {
             $newUser = User::where('email', $oauthUser->email)->first();
             if ($newUser == null) {
@@ -43,9 +43,8 @@ class GoogleController extends Controller
                     'password' => Hash::make($oauthUser->token),
                 ]);
             }
-            dd($newUser );
             Auth::login($newUser);
-            return redirect('/delete-account');
+            return redirect('/');
         }
     }
     public function mobileLogin(Request $request)

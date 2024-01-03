@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  {{-- <meta name="viewport" content="width=device-width, initial-scale=1"> --}}
 
   <!-- CSRF Token -->
   <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -16,10 +17,10 @@
 
   {{-- favicon --}}
   <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
-  <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
   {{-- jquery --}}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    {{-- bootstrap --}}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  {{-- bootstrap --}}
   <!-- Styles -->
 
 
@@ -43,10 +44,10 @@
   <div class="snap-y container-fluid relative">
     <div id="navigation" class="fixed top-0 z-[1000] w-full bg-white">
       <header class="bg-white container  mx-auto ">
-        <nav class="flex lg:px-0 items-center justify-between py-10" aria-label="Global">
+        <nav class="flex lg:px-0 items-center justify-between   py-10 sm:py-4" aria-label="Global">
           <div class="flex lg:flex-1">
             <a href="/" class="-m-1.5 p-1.5 ">
-              <span class="font-bold text-2xl">
+              <span class="font-bold text-2xl sm:text-lg">
                 {{ Str::upper(config('app.name')) }}
               </span>
               <div class="text-sm">Teman Menghafal Kata</div>
@@ -65,28 +66,29 @@
           <div class="hidden lg:flex lg:gap-x-12">
             <a href="/"
               class="text-md font-bold px-1 leading-6 text-gray-900 hover:bg-primary hover:text-white hover:rounded  hover:px-1 @if (Request::is('/')) bg-primary rounded text-white @endif  ">Beranda</a>
-              <a href="/explore"
+            <a href="/explore"
               class="text-md font-bold px-1 leading-6 text-gray-900 hover:bg-primary hover:text-white hover:rounded  hover:px-1 @if (Request::is('explore')) bg-primary rounded text-white @endif ">Explore</a>
-            <a href="/#tech-stack"
-              class="text-md font-bold px-1 leading-6 text-gray-900 hover:bg-primary hover:text-white hover:rounded  hover:px-1">Pengaturan</a>
+            {{-- <a href="/#tech-stack"
+              class="text-md font-bold px-1 leading-6 text-gray-900 hover:bg-primary hover:text-white hover:rounded  hover:px-1">Pengaturan</a> --}}
           </div>
           <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a @if (Request::is('/')) href="#get-in-touch" @else href="/#get-in-touch" @endif
-              class="text-md font-semibold px-1 leading-6 text-gray-900 hover:bg-primary hover:text-white hover:rounded  hover:px-1">Login<span
-                aria-hidden="true">&rarr;</span></a>
+            @if (auth()->check())
+            <a
+              class="text-md font-semibold px-1 leading-6 text-gray-900 hover:bg-primary hover:text-white hover:rounded  hover:px-1">{{ auth()->user()->name }}</a>
+            @endif
           </div>
         </nav>
         <!-- Mobile menu, show/hide based on menu open state. -->
         <div class="hidden mobile-menu transition ease-in-out delay-150 duration-300" role="dialog" aria-modal="false">
           <!-- Background backdrop, show/hide based on slide-over state. -->
           <div class="fixed inset-0 z-10"></div>
-          <div class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6">
+          <div class="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-3">
             <div class="flex items-center justify-between">
               <a href="/" class="-m-1.5 p-1.5 hover:bg-primary hover:text-white  hover:rounded hover:scale-100 ">
                 <span class="font-bold text-2xl">
-                    {{ Str::upper(config('app.name')) }}
-                  </span>
-                  <div class="text-sm">Teman Menghafal Kata</div>
+                  {{ Str::upper(config('app.name')) }}
+                </span>
+                <div class="text-sm">Teman Menghafal Kata</div>
               </a>
               <button type="button" id="exit-menu-mobile" class="-m-2.5 rounded-md p-2.5 text-gray-700">
                 <span class="sr-only">Close menu</span>
@@ -99,20 +101,19 @@
             <div class="mt-6 flow-root">
               <div class="-my-6 divide-y divide-gray-500/10">
                 <div class="space-y-2 py-6">
-                  <a href="/"
-                    onclick="closeNav()"
+                  <a href="/" onclick="closeNav()"
                     class="-mx-3 block rounded-lg px-3 py-2 text-base font-light leading-7 text-gray-900 hover:bg-gray-50">Beranda</a>
-                    <a
-                    href="explore"
+                  <a href="explore"
                     class="-mx-3 block rounded-lg px-3 py-2 text-base font-light leading-7 text-gray-900 hover:bg-gray-50">Explore</a>
-                  <a @if (Request::is('/')) href="#tech-stack-2" @else href="/#tech-stack-2" @endif
+                  {{-- <a @if (Request::is('/')) href="#tech-stack-2" @else href="/#tech-stack-2" @endif
                     onclick="closeNav()"
-                    class="-mx-3 block rounded-lg px-3 py-2 text-base font-light leading-7 text-gray-900 hover:bg-gray-50">Pengaturan</a>
+                    class="-mx-3 block rounded-lg px-3 py-2 text-base font-light leading-7 text-gray-900 hover:bg-gray-50">Pengaturan</a> --}}
                 </div>
                 <div class="py-6">
-                  <a @if (Request::is('/')) href="#get-in-touch" @else href="/#get-in-touch" @endif
-                    onclick="closeNav()"
-                    class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Login</a>
+                  @if (auth()->check())
+                    <a onclick="closeNav()"
+                      class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{ auth()->user()->name }}</a>
+                  @endif
                 </div>
               </div>
             </div>
@@ -121,8 +122,8 @@
       </header>
     </div>
 
-    <div class="mt-36">
-        @yield('content')
+    <div class="mt-36 sm:mt-24">
+      @yield('content')
     </div>
     <div class="snap-madatory snap-center container mb-4 mx-auto flex justify-center items-center" id="projects">
       <div class="w-full">
@@ -137,7 +138,7 @@
 
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   <script>
     function sendGetInTouch(e) {
       e.preventDefault();

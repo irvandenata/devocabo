@@ -119,7 +119,7 @@ class WordController extends Controller
      */
     public function store(Request $request,$slug)
     {
-        TranslateTextHelper::setSource('en')->setTarget('id');
+        TranslateTextHelper::setSource('id')->setTarget('en');
         DB::beginTransaction();
         try {
             $translatedText = TranslateTextHelper::translate($request->word);
@@ -161,8 +161,8 @@ class WordController extends Controller
         // dd(TranslateTextHelper::setSource('ind')->setTarget('en')->translate("lari"));
         $data['words'] = $data['words']->map(function ($item) use ($country1,$country2) {
             $word = $item->word;
-            $item->word = TranslateTextHelper::setSource('id')->setTarget($country1)->translate($word);
-            $item->mean = TranslateTextHelper::setSource('id')->setTarget($country2)->translate($word);
+            $item->word = TranslateTextHelper::setSource('en')->setTarget($country1)->translate($word);
+            $item->mean = TranslateTextHelper::setSource('en')->setTarget($country2)->translate($word);
             return $item;
         });
         return view($this->view.'.detail',$data);
