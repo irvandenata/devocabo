@@ -128,7 +128,7 @@
     <div class="snap-madatory snap-center container mb-4 mx-auto flex justify-center items-center" id="projects">
       <div class="w-full">
         <div class=" bg-background container rounded-lg border-2 border-gray p-4 dark:bg-gray-800 flex justify-center">
-          <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2023 <a href="#"
+          <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2024 <a href="#"
               class="hover:underline">Irvan Denata™</a>. All Rights Reserved.
           </span>
         </div>

@@ -155,9 +155,9 @@
       ajax: {
         url: "{{ route('words.index', $groupId) }}",
         type: 'GET',
-        data: function(d) {
-          d.search = $('#default-search').val();
-        }
+        // data: function(d) {
+        //   d.search = $('#default-search').val();
+        // }
       },
       columns: [{
           data: 'DT_RowIndex',
@@ -179,7 +179,9 @@
           {
             data: '{{ $item }}',
             name: '{{ $item }}',
-            className: 'text-center'
+            className: 'text-center',
+            searchable: true,
+            orderable: true,
           },
         @endforeach
       ]

@@ -78,26 +78,32 @@
       <!-- Carousel wrapper -->
 
       <div class="relative h-56 overflow-hidden md:h-96">
-        @foreach ($words as $item)
+        @php
+          $index = 0;
+        @endphp
+        @foreach ($means as $key=>$item)
           <div id="slide-{{ $loop->iteration }}"
             class=" @if ($loop->iteration != 1) hidden @endif slide duration-700 ease-in-out border-2 w-full h-full rounded border-gray"
             data-carousel-item>
-            <div class="absolute  text-3xl font-bold"
+            <div class="absolute  text-3xl text-center font-bold"
               style="
-          top: 40%;
+          top: 50%;
             left: 50%;
           transform: translate(-50%, -50%);
           ">
-              {{ $item->word }}</div>
+              {{ $item['word'] }}</div>
             <div class="absolute meaning"
               style="
-          top: 70%;
+          top: 75%;
             left: 50%;
           transform: translate(-50%, -50%);
           ">
-              {{ $item->mean }}
+              {{ $item['mean']}}
             </div>
           </div>
+            @php
+                $index++;
+            @endphp
         @endforeach
       </div>
       <!-- Slider controls -->
@@ -141,7 +147,7 @@
   <script>
     let showMean = true;
     let slide = 1;
-    let totalSlide = {{ $words->count() }};
+    let totalSlide = {{ $amount }};
     let prevBtn = document.getElementById('prev');
     let nextBtn = document.getElementById('next');
     let carousel = document.getElementById('controls-carousel');

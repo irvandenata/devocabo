@@ -1,8 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Exceptions\CustomException;
-use App\Helpers\GlobalFunction;
 use App\Helpers\TranslateTextHelper;
 use App\Http\Controllers\Controller;
 use App\Models\GroupWord;
@@ -32,8 +32,8 @@ class WordController extends Controller
         $this->newModel = new Word();
         $this->model = Word::query()->latest();
         $this->rows = [
-            'name'=>['Kata'],
-            'column' => ['word']
+            'name' => ['Kata'],
+            'column' => ['word'],
         ];
 
         $this->updateLink = 'words.update';
@@ -46,7 +46,7 @@ class WordController extends Controller
 
             $result = Validator::make($request->all(), [
                 'word' => 'required',
-                'group_word_id' => 'required|exists:group_words,id'
+                'group_word_id' => 'required|exists:group_words,id',
             ]);
         } else {
             $result = Validator::make($request->all(), [
@@ -66,19 +66,25 @@ class WordController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request,$id)
+    public function index(Request $request, $id)
     {
         $data['title'] = $this->name;
         $data['breadcrumb'] = $this->breadcrumb;
+        // $prep = $this->model->where('word','like','%determiner%')->get();
+        // foreach ($prep as $key => $item) {
+        //     $item->word = str_replace('determiner','',$item->word);
+        //     $item->save();
+        // }
         if ($request->ajax()) {
             $group = GroupWord::where('slug', $id)->first();
-            $items = $this->model->where('group_word_id',$group->id)->latest();
+            $items = $this->model->where('group_word_id', $group->id)->latest();
+
             return DataTables::of($items)
                 ->addColumn('action', function ($item) use ($group) {
-                    if(auth()->user()->id == $group->user_id){
+                    if (auth()->user()->id == $group->user_id) {
                         return '
                            <a class="inline-flex items-center p-2 text-sm font-medium bg-gray  text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 hover:bg-orange hover:text-white cursor-pointer"  onclick="deleteItem(' . $item->id . ')">Hapus</a>';
-                    }else{
+                    } else {
                         return '-';
                     }
 
@@ -93,7 +99,7 @@ class WordController extends Controller
         $data['createLink'] = $this->createLink;
         $data['rows'] = $this->rows;
         $data['view'] = $this->view;
-        return view($this->view.'.index', $data);
+        return view($this->view . '.index', $data);
     }
     /**
      * Show the form for creating a new resource.
@@ -117,7 +123,7 @@ class WordController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request,$slug)
+    public function store(Request $request, $slug)
     {
         TranslateTextHelper::setSource('id')->setTarget('en');
         DB::beginTransaction();
@@ -137,12 +143,12 @@ class WordController extends Controller
             return response()->json($e->getOptions(), 500);
         } catch (CustomException $e) {
             DB::rollback();
-            return response()->json($e->getOptions(),$e->getCode());
+            return response()->json($e->getOptions(), $e->getCode());
         } catch (\Throwable $e) {
             DB::rollback();
             return response()->json(['message' => $e->getMessage()], 500);
         }
-        return response()->json(['message' => "$this->name has been created !", "data" => $item ,'status'=>200], 200);
+        return response()->json(['message' => "$this->name has been created !", "data" => $item, 'status' => 200], 200);
     }
 
     /**
@@ -153,19 +159,51 @@ class WordController extends Controller
      */
     public function show($id)
     {
-        $data['group']= GroupWord::where('slug',$id)->first();
+        $data['group'] = GroupWord::where('slug', $id)->first();
         $data['words'] = $data['group']->words;
         //mapping words
-        $country1 = request()->country1??'id';
-        $country2 = request()->country2??'en';
-        // dd(TranslateTextHelper::setSource('ind')->setTarget('en')->translate("lari"));
-        $data['words'] = $data['words']->map(function ($item) use ($country1,$country2) {
-            $word = $item->word;
-            $item->word = TranslateTextHelper::setSource('en')->setTarget($country1)->translate($word);
-            $item->mean = TranslateTextHelper::setSource('en')->setTarget($country2)->translate($word);
-            return $item;
-        });
-        return view($this->view.'.detail',$data);
+        $country1 = request()->country1 ?? 'id';
+        $country2 = request()->country2 ?? 'en';
+        $words = '';
+        $count = 0;
+        $resWord = '';
+        $resMean = '';
+        $i = 0;
+        foreach ($data['words'] as $key => $word) {
+            $words .= $word->word . ' | ';
+            if ($count > 1000) {
+                $resWord .= TranslateTextHelper::setSource('en')->setTarget($country1)->translate($words);
+                $resMean .= TranslateTextHelper::setSource('en')->setTarget($country2)->translate($words);
+                $count = 0;
+                $words = '';
+                $i++;
+            }
+// if($i == 2){
+//     $means= explode(',',$resMean);
+//                 $words= explode(',',$resWord);
+//                 dd($means,$words);
+// }
+            $count++;
+
+        }
+
+        $resWord .= TranslateTextHelper::setSource('en')->setTarget($country1)->translate($words);
+        $resMean .= TranslateTextHelper::setSource('en')->setTarget($country2)->translate($words);
+        $words = str_replace(' | ', '|', $resWord);
+        $means = str_replace(' | ', '|', $resMean);
+        $words = explode('|', $resWord);
+        $means = explode('|', $resMean);
+        // dd(count($words),count($means));
+        //mapping means
+        foreach ($words as $key => $word) {
+            $data['means'][$key]['word'] = $words[$key];
+            $data['means'][$key]['mean'] = $means[$key];
+        }
+
+        //last means
+        $data['means'] = array_slice($data['means'], 0, -1);
+        $data['amount'] = count($data['means']);
+        return view($this->view . '.detail', $data);
     }
 
     /**
@@ -205,7 +243,7 @@ class WordController extends Controller
             return response()->json($e->getOptions(), 500);
         } catch (CustomException $e) {
             DB::rollback();
-            return response()->json($e->getOptions(),$e->getCode());
+            return response()->json($e->getOptions(), $e->getCode());
         }
         return response()->json(['message' => "$this->name has been updated !", "data" => $item], 200);
     }
@@ -220,20 +258,20 @@ class WordController extends Controller
     {
         try {
             $item = $this->findById($id);
-            if(!$item){
+            if (!$item) {
                 throw new CustomException("error", 404, null, ["Data not found"]);
             }
             $item->delete();
-            return response()->json(['message' => "$this->name berhasil dihapus gan !",'status'=>200], 200);
-        }catch (Exception $e) {
+            return response()->json(['message' => "$this->name berhasil dihapus gan !", 'status' => 200], 200);
+        } catch (Exception $e) {
             return response()->json($e->getOptions(), 500);
         } catch (CustomException $e) {
             return response()->json($e->getOptions(), 500);
         }
     }
 
-
-    public function changeShow ($id){
+    public function changeShow($id)
+    {
         $item = $this->findById($id);
         if ($item->status == 1) {
             $item->status = 0;
