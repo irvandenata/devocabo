@@ -160,7 +160,12 @@ class WordController extends Controller
     public function show($id)
     {
         $data['group'] = GroupWord::where('slug', $id)->first();
+
         $data['words'] = $data['group']->words;
+        if(isset(request()->type) && (request()->type != -1 || request()->type == 0) ){
+            $data['words'] = $data['group']->words()->where('type',request()->type)->get();
+        }
+        // dd($data['words']);
         //mapping words
         $country1 = request()->country1 ?? 'id';
         $country2 = request()->country2 ?? 'en';
@@ -169,6 +174,7 @@ class WordController extends Controller
         $resWord = '';
         $resMean = '';
         $i = 0;
+        if(count($data['words']) != 0){
         foreach ($data['words'] as $key => $word) {
             $words .= $word->word . ' | ';
             if ($count > 1000) {
@@ -184,7 +190,6 @@ class WordController extends Controller
 //                 dd($means,$words);
 // }
             $count++;
-
         }
 
         $resWord .= TranslateTextHelper::setSource('en')->setTarget($country1)->translate($words);
@@ -199,7 +204,14 @@ class WordController extends Controller
             $data['means'][$key]['word'] = $words[$key];
             $data['means'][$key]['mean'] = $means[$key];
         }
-
+        }else{
+            $data['means'] = [
+                [
+                    'word' => 'Data Kosong',
+                    'mean' => 'Data Kosong',
+                ],
+            ];
+        }
         //last means
         $data['means'] = array_slice($data['means'], 0, -1);
         $data['amount'] = count($data['means']);
@@ -270,15 +282,12 @@ class WordController extends Controller
         }
     }
 
-    public function changeShow($id)
+    public function changeType($word,$group,$lang)
     {
-        $item = $this->findById($id);
-        if ($item->status == 1) {
-            $item->status = 0;
-        } else {
-            $item->status = 1;
-        }
+        $word = TranslateTextHelper::setSource($lang)->setTarget('en')->translate($word);
+        $item = Word::where('word',$word)->where('group_word_id',$group)->first();
+        $item->type = request()->type;
         $item->save();
-        return response()->json(['message' => 'Data berhasil diubah', 'status' => 200]);
+        return response()->json(['message' => "Tipe kata berhasil diubah gan !", 'status' => 200], 200);
     }
 }

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('words', function (Blueprint $table) {
             $table->id();
             $table->string('word');
+            $table->integer('type')->default(0);
             $table->foreignId('group_word_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

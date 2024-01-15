@@ -4,8 +4,8 @@
   <div id="about-me"
     class="snap-madatory snap-center mx-auto container justify-center flex lg:flex-row flex-col  lg:items-center "
     id="about-me">
-    <div class="h-[75vh] text-center text-lg font-bold relative">
-        <div class="absolute top-[50%] translate-y-[-50%]">
+    <div class="h-[75vh] text-center text-lg font-bold relative lg:w-[50%] sm:w-full">
+        <div class="absolute top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%]">
             Hola, Teman Teman ! <br>
         Silahkan Login Terlebih Dahulu Untuk Menggunakan Devocabo
         <br>

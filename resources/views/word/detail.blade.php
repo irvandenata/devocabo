@@ -10,22 +10,28 @@
 @endpush
 @push('style')
   <style>
+    .active {
+      background-color: black !important;
+      color: white !important;
+
+    }
   </style>
 @endpush
 @section('content')
   <div class="snap-madatory snap-center container min-h-[70vh] mx-auto justify-center items-center">
     <div class="text-center font-bold text-xl mb-2">
-        {{ $group->name  }}
+      {{ $group->name }}
     </div>
     <div onclick="
         window.location.href = '/';
-        " class="p-3 border-2 border-gray rounded bg-background mb-3" >Kembali</div>
+        "
+      class="p-3 border-2 border-gray rounded bg-background mb-3">Kembali</div>
 
     <div class="filter mb-3">
       <div class="group flex mt-3">
         <div class="relative group w-[40%]">
           <button id="dropdown-button"
-            class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
+            class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border-2 border-gray rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
             <span class="mr-2" id="country-1" data-id="id">Indonesia</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2 -mr-1" viewBox="0 0 20 20" fill="currentColor"
               aria-hidden="true">
@@ -38,7 +44,7 @@
             class="hidden  absolute right-0 mt-2 z-50 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
             <!-- Search input -->
             <input id="search-input"
-              class="block w-full px-4 py-2 text-gray-800 border rounded-md  border-gray-300 focus:outline-none"
+              class="block w-full px-4 py-2 text-gray-800 border-2 rounded-md  border-gray focus:outline-none"
               type="text" placeholder="Cari Bahasa" autocomplete="off">
             <!-- Dropdown content goes here -->
             <div id="item-1">
@@ -50,7 +56,7 @@
         </div>
         <div class="relative group w-[40%]">
           <button id="dropdown-button-2"
-            class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
+            class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border-2 border-gray rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
             <span class="mr-2" id="country-2" data-id="en">Inggris</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2 -mr-1" viewBox="0 0 20 20" fill="currentColor"
               aria-hidden="true">
@@ -63,7 +69,7 @@
             class="hidden absolute right-0 mt-2 z-50 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
             <!-- Search input -->
             <input id="search-input-2"
-              class="block w-full px-4 py-2 text-gray-800 border rounded-md  border-gray-300 focus:outline-none"
+              class="block w-full px-4 py-2 text-gray-800 border-2 rounded-md  border-gray focus:outline-none"
               type="text" placeholder="Cari Bahasa" autocomplete="off">
             <!-- Dropdown content goes here -->
             <div id="item-2">
@@ -72,42 +78,74 @@
           </div>
         </div>
       </div>
-      <div class="p-2 border-2 rounded border-gray text-center cursor-pointer" onclick="reloadPage()">Terapkan</div>
+      <div class="p-2 my-2 border-2 rounded border-gray text-center cursor-pointer hover:bg-black hover:text-white"
+        onclick="reloadPage()">Terapkan</div>
+    </div>
+    <div class="my-2">Filter Kata :</div>
+    <div class="my-4  grid grid-cols-4 gap-x-6">
+      <div
+        class="border-2 p-2 cursor-pointer hover:bg-background  border-gray text-center rounded @if (!isset(request()->type) || request()->type == -1) active @endif"
+        onclick="filter(-1)">Semua</div>
+      <div
+        class="border-2 p-2 cursor-pointer hover:bg-background  border-gray text-center rounded @if (request()->type == 1) active @endif"
+        onclick="filter(1)">Hafal</div>
+      <div
+        class="border-2 p-2 cursor-pointer hover:bg-background  border-gray text-center rounded @if (request()->type == 2) active @endif"
+        onclick="filter(2)">Lupa</div>
+      <div
+        class="border-2 p-2 cursor-pointer hover:bg-background  border-gray text-center rounded @if (isset(request()->type) &&request()->type == 0) active @endif"
+        onclick="filter(0)">Belum</div>
     </div>
     <div id="controls-carousel" class="relative w-full" data-carousel="static">
       <!-- Carousel wrapper -->
 
-      <div class="relative h-56 overflow-hidden md:h-96">
+      <div class="relative h-72 overflow-hidden md:h-96">
         @php
           $index = 0;
         @endphp
-        @foreach ($means as $key=>$item)
+        @foreach ($words as $key => $item)
           <div id="slide-{{ $loop->iteration }}"
-            class=" @if ($loop->iteration != 1) hidden @endif slide duration-700 ease-in-out border-2 w-full h-full rounded border-gray"
+            class=" @if ($loop->iteration != 1) hidden @endif  sm:mb-[100px] slide duration-700 ease-in-out border-2 w-full h-full rounded border-gray"
             data-carousel-item>
+            <div class="absolute right-[10px] top-[10px] ">
+                {{ $loop->iteration }} / {{ $amount }}
+            </div>
             <div class="absolute  text-3xl text-center font-bold"
               style="
           top: 50%;
             left: 50%;
           transform: translate(-50%, -50%);
           ">
-              {{ $item['word'] }}</div>
+              {{ $means[$key]['word'] }}</div>
             <div class="absolute meaning"
               style="
           top: 75%;
             left: 50%;
           transform: translate(-50%, -50%);
           ">
-              {{ $item['mean']}}
+              {{ $means[$key]['mean'] }}
+            </div>
+            <div class="my-4 absolute  w-[90%] left-[50%] translate-x-[-50%]  grid grid-cols-3 gap-x-6 z-[1000]" style="bottom:0">
+
+              <div id="done-{{ $loop->iteration }}"
+                class="sm:text-[10px] btn-type-{{ $loop->iteration }} border-2 p-2 cursor-pointer hover:bg-background  border-gray text-center rounded @if ($item->type == 1) active @endif"
+                onclick="changeType(event,'{{ $item['word'] }}',1)">Hafal</div>
+              <div id="undone-{{ $loop->iteration }}"
+                class="sm:text-[10px] btn-type-{{ $loop->iteration }} border-2 p-2 cursor-pointer hover:bg-background  border-gray text-center rounded @if ($item->type == 2) active @endif"
+                onclick="changeType(event,'{{ $item['word'] }}',2)">Lupa</div>
+              <div id="not-{{ $loop->iteration }}"
+                class="sm:text-[10px] btn-type-{{ $loop->iteration }} border-2 p-2 cursor-pointer hover:bg-background  border-gray text-center rounded @if ($item->type == 0) active @endif"
+                onclick="changeType(event,'{{ $item['word'] }}',0)">Belum</div>
             </div>
           </div>
-            @php
-                $index++;
-            @endphp
+          @php
+            $index++;
+          @endphp
         @endforeach
+
       </div>
       <!-- Slider controls -->
-      <button type="button"
+      <div
         class="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
         id='prev'>
         <span
@@ -119,8 +157,8 @@
           </svg>
           <span class="sr-only">Previous</span>
         </span>
-      </button>
-      <button type="button"
+      </div>
+      <div type="button"
         class="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
         id='next'>
         <span
@@ -132,10 +170,11 @@
           </svg>
           <span class="sr-only">Next</span>
         </span>
-      </button>
+      </div>
     </div>
-    <div class="p-3 border-2 border-gray rounded my-3 text-center" id="btn-arti">
-        Tampil Arti
+    <div id="btn-mean" class="p-3 border-2 cursor-pointer hover:bg-black hover:text-white border-gray rounded my-3 text-center"
+      onclick="changeShowMean()">
+      Sembunyikan Arti
     </div>
   </div>
 @endsection
@@ -157,7 +196,7 @@
         slide = 1;
       }
       let slides = document.getElementsByClassName('slide')
-      console.log(slides);
+
       for (let i = 0; i < slides.length; i++) {
         slides[i].classList.add('hidden');
       }
@@ -169,30 +208,28 @@
         slide = totalSlide;
       }
       let slides = document.getElementsByClassName('slide')
-      console.log(slides);
       for (let i = 0; i < slides.length; i++) {
         slides[i].classList.add('hidden');
       }
       document.getElementById('slide-' + slide).classList.remove('hidden');
     });
 
-    let daftarNegara = [
-        {
-            'nama': 'Indonesia',
-            'kode': 'id',
-        },
-        {
-            'nama': 'Inggris',
-            'kode': 'en',
-        },
-        {
-            'nama': 'Arab',
-            'kode': 'ar',
-        },
-        {
-            'nama': 'Jepang',
-            'kode': 'ja',
-        }
+    let daftarNegara = [{
+        'nama': 'Indonesia',
+        'kode': 'id',
+      },
+      {
+        'nama': 'Inggris',
+        'kode': 'en',
+      },
+      {
+        'nama': 'Arab',
+        'kode': 'ar',
+      },
+      {
+        'nama': 'Jepang',
+        'kode': 'ja',
+      }
 
     ];
 
@@ -306,37 +343,69 @@
         isOpen2 = false;
       }
     });
+    let country1 = 'id';
+    let country2 = 'en';
 
     function reloadPage() {
-      let country1 = document.getElementById('country-1').attributes['data-id'].value;
-      let country2 = document.getElementById('country-2').attributes['data-id'].value;
+      country1 = document.getElementById('country-1').attributes['data-id'].value;
+      country2 = document.getElementById('country-2').attributes['data-id'].value;
       window.location.href = `{{ route('words.show', $group->slug) }}?country1=${country1}&country2=${country2}`;
     }
 
-    @if(request()->country1)
+    @if (request()->country1)
       document.getElementById('country-1').attributes['data-id'].value = '{{ request()->country1 }}';
       document.getElementById('country-1').innerHTML = daftarNegara.filter(country => {
         return country.kode == '{{ request()->country1 }}';
       })[0].nama;
     @endif
-    @if(request()->country2)
+    @if (request()->country2)
       document.getElementById('country-2').attributes['data-id'].value = '{{ request()->country2 }}';
       document.getElementById('country-2').innerHTML = daftarNegara.filter(country => {
         return country.kode == '{{ request()->country2 }}';
       })[0].nama;
     @endif
 
-    let btnArti = document.getElementById('btn-arti');
-    btnArti.addEventListener('click', function() {
+    function changeShowMean() {
       let meanings = document.getElementsByClassName('meaning');
+      let btnMean = document.getElementById('btn-mean');
       for (let i = 0; i < meanings.length; i++) {
         if (showMean) {
-          meanings[i].classList.remove('hidden');
-        } else {
           meanings[i].classList.add('hidden');
+          btnMean.innerHTML = 'Tampil Arti';
+        } else {
+          meanings[i].classList.remove('hidden');
+          btnMean.innerHTML = 'Sembunyikan Arti';
         }
       }
       showMean = !showMean;
-    });
+    }
+
+    function filter(type) {
+      window.location.href =
+        `{{ route('words.show', $group->slug) }}?country1=${country1}&country2=${country2}&type=${type}`;
+    }
+
+    function changeType(el,word,type) {
+        let btnTypes = document.getElementsByClassName('btn-type-'+el.target.id.split('-')[1]);
+        for (let i = 0; i < btnTypes.length; i++) {
+          btnTypes[i].classList.remove('active');
+        }
+        el.target.classList.add('active');
+        fetch("/words-change/" +word+'/{{ $group->id }}/'+country1+"?type="+type, {
+              method: 'GET',
+              headers: {
+                'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                'Accept': 'application/json',
+              },
+            }).then(response => response.json())
+            .then(data => {
+              if(data.status == 200){
+                toastr.success(data.message);
+              }else{
+
+              }
+
+            }).catch(error => toastr.error('Error:', error));
+    }
   </script>
 @endpush

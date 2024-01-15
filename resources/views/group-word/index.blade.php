@@ -80,7 +80,7 @@
             </p> --}}
             <div onclick="
             window.location.href = '{{ route('words.show', $item->slug) }}'
-            " class="p-2 border-2 my-2 border-primary text-center text-sm rounded">
+            " class="p-2 border-2 my-2 border-primary text-center cursor-pointer hover:bg-black hover:border-black hover:text-primary text-sm rounded">
                 Mode Menghafal
             </div>
             <div class="mt-2">

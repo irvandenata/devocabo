@@ -267,7 +267,6 @@ class GroupWordController extends Controller
     $newItem->description = $item->description;
     $newItem->access = $item->access;
     $newItem->user_id = auth()->user()->id;
-    $newItem->image = $item->image;
     $newItem->save();
     foreach ($item->words as $value) {
         $newWord = new \App\Models\Word();
