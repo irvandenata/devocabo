@@ -343,8 +343,8 @@
         isOpen2 = false;
       }
     });
-    let country1 = 'id';
-    let country2 = 'en';
+    let country1 = "{{ request()->country1 ? request()->country1 : 'id' }}";
+    let country2 = "{{ request()->country2 ? request()->country2 : 'en' }}";
 
     function reloadPage() {
       country1 = document.getElementById('country-1').attributes['data-id'].value;
