@@ -386,17 +386,24 @@
     }
 
     function changeType(el,word,type) {
+        let oldType = "{{ request()->type??-1 }}"
         let btnTypes = document.getElementsByClassName('btn-type-'+el.target.id.split('-')[1]);
         for (let i = 0; i < btnTypes.length; i++) {
           btnTypes[i].classList.remove('active');
         }
         el.target.classList.add('active');
-        fetch("/words-change/" +word+'/{{ $group->id }}/'+country1+"?type="+type, {
-              method: 'GET',
+        fetch("/words-change/" +word+'/{{ $group->id }}/en', {
+              method: 'PUT',
               headers: {
                 'X-CSRF-TOKEN': "{{ csrf_token() }}",
                 'Accept': 'application/json',
+                'Content-Type': 'application/json'
+
               },
+                body: JSON.stringify({
+                    type: type,
+                    old_type: oldType
+                })
             }).then(response => response.json())
             .then(data => {
               if(data.status == 200){

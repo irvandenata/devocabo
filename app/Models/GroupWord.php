@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class GroupWord extends Model
 {
     use HasFactory;
-
+    protected $guarded = [];
     public function words()
     {
         return $this->hasMany(Word::class);

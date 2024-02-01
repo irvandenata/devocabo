@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Word extends Model
 {
     use HasFactory;
-    protected $fillable = ['word', 'group_word_id'];
+    protected $guarded = [];
+    //timestamp
+    public $timestamps = true;
     public function groupWord()
     {
         return $this->belongsTo(GroupWord::class);

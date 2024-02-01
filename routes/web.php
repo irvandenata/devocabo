@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Route;
     Route::get('/group-words/{id}/show', [App\Http\Controllers\WordController::class, 'show'])->name('words.show');
     Route::post('/group-words/{id}', [App\Http\Controllers\WordController::class, 'store'])->name('words.store');
     Route::delete('/words/{id}', [App\Http\Controllers\WordController::class, 'destroy'])->name('words.destroy');
-    Route::get('/words-change/{word}/{group}/{lang}', [App\Http\Controllers\WordController::class, 'changeType'])->name('words.change');
+    Route::put('/words-change/{word}/{group}/{lang}', [App\Http\Controllers\WordController::class, 'changeType'])->name('words.change');
     // Route::get('/group-words/{id}', [App\Http\Controllers\WordController::class, 'index'])->name('words.create');
     // Route::get('/group-words/{id}', [App\Http\Controllers\WordController::class, 'index'])->name('words.store');
     // Route::get('/group-words/{id}', [App\Http\Controllers\WordController::class, 'index'])->name('words.create');

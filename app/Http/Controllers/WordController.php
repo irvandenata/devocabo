@@ -161,9 +161,9 @@ class WordController extends Controller
     {
         $data['group'] = GroupWord::where('slug', $id)->first();
 
-        $data['words'] = $data['group']->words;
+        $data['words'] = $data['group']->words()->orderBy('word','asc')->get();
         if(isset(request()->type) && (request()->type != -1 || request()->type == 0) ){
-            $data['words'] = $data['group']->words()->where('type',request()->type)->get();
+            $data['words'] = $data['group']->words()->where('type',request()->type)->orderBy('word','asc')->get();
         }
         // dd($data['words']);
         //mapping words
@@ -282,12 +282,23 @@ class WordController extends Controller
         }
     }
 
-    public function changeType($word,$group,$lang)
+    public function changeType(Request $request,$word,$group,$lang)
     {
         $word = TranslateTextHelper::setSource($lang)->setTarget('en')->translate($word);
-        $item = Word::where('word',$word)->where('group_word_id',$group)->first();
-        $item->type = request()->type;
+        $item = Word::where('word',$word)->where('group_word_id',$group);
+        if($request->old_type != -1 ){
+            $item = $item->where('type',$request->old_type);
+        }
+        $item = $item->first();
+        $item->type = $request->type;
         $item->save();
-        return response()->json(['message' => "Tipe kata berhasil diubah gan !", 'status' => 200], 200);
+        if(!$item){
+            return response()->json(['message' => "Tipe kata gagal diubah gan !", 'status' => 500], 500);
+        }
+        // $test = Word::where('word',$word)->where('group_word_id',$group)->first();
+        // dd($test,$item);
+        return response()->json(['message' => "Tipe kata berhasil diubah gan !", 'status' => 200,'data'
+        => $item
+    ], 200);
     }
 }
