@@ -74,6 +74,22 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('google', [App\Http\Controllers\GoogleController::class, 'redirect']);
 Route::get('google/callback', [App\Http\Controllers\GoogleController::class, 'callback']);
 
+Route::get('/remove-duplicate',function(){
+    $groupWords = \App\Models\GroupWord::all();
+    foreach($groupWords as $groupWord){
+        $words = \App\Models\Word::where('group_word_id',$groupWord->id)->get();
+        $wordArray = [];
+        foreach($words as $word){
+            if(in_array($word->word,$wordArray)){
+                $word->delete();
+            }else{
+                $wordArray[] = $word->word;
+            }
+        }
+    }
+    return "success";
+});
+
 // Route::prefix('admin')->as('admin.')->middleware('auth') ->group(function () {
 //     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 //     Route::resource('users', App\Http\Controllers\Admin\UserController::class);
