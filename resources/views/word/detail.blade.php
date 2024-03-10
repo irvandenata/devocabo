@@ -93,7 +93,7 @@
         class="border-2 p-2 cursor-pointer hover:bg-background  border-gray text-center rounded @if (request()->type == 2) active @endif"
         onclick="filter(2)">Lupa</div>
       <div
-        class="border-2 p-2 cursor-pointer hover:bg-background  border-gray text-center rounded @if (isset(request()->type) &&request()->type == 0) active @endif"
+        class="border-2 p-2 cursor-pointer hover:bg-background  border-gray text-center rounded @if (isset(request()->type) && request()->type == 0) active @endif"
         onclick="filter(0)">Belum</div>
     </div>
     <div id="controls-carousel" class="relative w-full" data-carousel="static">
@@ -107,8 +107,8 @@
           <div id="slide-{{ $loop->iteration }}"
             class=" @if ($loop->iteration != 1) hidden @endif  sm:mb-[100px] slide duration-700 ease-in-out border-2 w-full h-full rounded border-gray"
             data-carousel-item>
-            <div class="absolute right-[10px] top-[10px] ">
-                {{ $loop->iteration }} / {{ $amount }}
+            <div class="absolute right-[10px] top-[10px] z-[100] cursor-pointer " onclick="goTo()">
+              {{ $loop->iteration }} / {{ $amount }}
             </div>
             <div class="absolute  text-3xl text-center font-bold"
               style="
@@ -125,7 +125,8 @@
           ">
               {{ $means[$key]['mean'] }}
             </div>
-            <div class="my-4 absolute  w-[90%] left-[50%] translate-x-[-50%]  grid grid-cols-3 gap-x-6 z-[1000]" style="bottom:0">
+            <div class="my-4 absolute  w-[90%] left-[50%] translate-x-[-50%]  grid grid-cols-3 gap-x-6 z-[1000]"
+              style="bottom:0">
 
               <div id="done-{{ $loop->iteration }}"
                 class="sm:text-[10px] btn-type-{{ $loop->iteration }} border-2 p-2 cursor-pointer hover:bg-background  border-gray text-center rounded @if ($item->type == 1) active @endif"
@@ -172,7 +173,8 @@
         </span>
       </div>
     </div>
-    <div id="btn-mean" class="p-3 border-2 cursor-pointer hover:bg-black hover:text-white border-gray rounded my-3 text-center"
+    <div id="btn-mean"
+      class="p-3 border-2 cursor-pointer hover:bg-black hover:text-white border-gray rounded my-3 text-center"
       onclick="changeShowMean()">
       Sembunyikan Arti
     </div>
@@ -385,34 +387,65 @@
         `{{ route('words.show', $group->slug) }}?country1=${country1}&country2=${country2}&type=${type}`;
     }
 
-    function changeType(el,word,type) {
-        let oldType = "{{ request()->type??-1 }}"
-        let btnTypes = document.getElementsByClassName('btn-type-'+el.target.id.split('-')[1]);
-        for (let i = 0; i < btnTypes.length; i++) {
-          btnTypes[i].classList.remove('active');
-        }
-        el.target.classList.add('active');
-        fetch("/words-change/" +word+'/{{ $group->id }}/en', {
-              method: 'PUT',
-              headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+    function changeType(el, word, type) {
+      let oldType = "{{ request()->type ?? -1 }}"
+      let btnTypes = document.getElementsByClassName('btn-type-' + el.target.id.split('-')[1]);
+      for (let i = 0; i < btnTypes.length; i++) {
+        btnTypes[i].classList.remove('active');
+      }
+      el.target.classList.add('active');
+      fetch("/words-change/" + word + '/{{ $group->id }}/en', {
+          method: 'PUT',
+          headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
 
-              },
-                body: JSON.stringify({
-                    type: type,
-                    old_type: oldType
-                })
-            }).then(response => response.json())
-            .then(data => {
-              if(data.status == 200){
-                toastr.success(data.message);
-              }else{
+          },
+          body: JSON.stringify({
+            type: type,
+            old_type: oldType
+          })
+        }).then(response => response.json())
+        .then(data => {
+          if (data.status == 200) {
+            toastr.success(data.message);
+          } else {
 
-              }
+          }
 
-            }).catch(error => toastr.error('Error:', error));
+        }).catch(error => toastr.error('Error:', error));
+
+
+    }
+
+    function goTo() {
+      Swal.fire({
+        title: 'Masukan nomor slide',
+        input: 'number',
+        inputAttributes: {
+          autocapitalize: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Go',
+        showLoaderOnConfirm: true,
+        preConfirm: (slide) => {
+          if (slide > 0 && slide <= {{ $amount }}) {
+            let slides = document.getElementsByClassName('slide')
+            for (let i = 0; i < slides.length; i++) {
+              slides[i].classList.add('hidden');
+            }
+            document.getElementById('slide-' + slide).classList.remove('hidden');
+
+          } else {
+            Swal.showValidationMessage(
+              `Nomor slide tidak valid`
+            )
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      })
+
     }
   </script>
 @endpush
