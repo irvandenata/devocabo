@@ -429,13 +429,15 @@
         showCancelButton: true,
         confirmButtonText: 'Go',
         showLoaderOnConfirm: true,
-        preConfirm: (slide) => {
-          if (slide > 0 && slide <= {{ $amount }}) {
+        preConfirm: (number) => {
+          if (number > 0 && number <= {{ $amount }}) {
             let slides = document.getElementsByClassName('slide')
             for (let i = 0; i < slides.length; i++) {
               slides[i].classList.add('hidden');
             }
-            document.getElementById('slide-' + slide).classList.remove('hidden');
+            document.getElementById('slide-' + number).classList.remove('hidden');
+
+            slide = number;
 
           } else {
             Swal.showValidationMessage(
