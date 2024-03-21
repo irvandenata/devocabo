@@ -264,9 +264,9 @@
     searchInput.addEventListener('input', () => {
       const searchTerm = searchInput.value.toLowerCase();
       document.getElementById('item-1').innerHTML = '';
-      if (searchTerm.length < 3) {
-        return;
-      }
+    //   if (searchTerm.length < 3) {
+    //     return;
+    //   }
       results = daftarNegara.filter(country => {
         return country.nama.toLowerCase().includes(searchTerm);
       });
@@ -311,9 +311,9 @@
     searchInput2.addEventListener('input', () => {
       const searchTerm = searchInput2.value.toLowerCase();
       document.getElementById('item-2').innerHTML = '';
-      if (searchTerm.length < 3) {
-        return;
-      }
+    //   if (searchTerm.length < 3) {
+    //     return;
+    //   }
       results = daftarNegara.filter(country => {
         return country.nama.toLowerCase().includes(searchTerm);
       });
